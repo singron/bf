@@ -20,6 +20,22 @@ void nlist_add(nlist *list, ninstr* instr) {
 	++list->size;
 }
 
+void nlist_insert(nlist *list, ninstr *instr, int n) {
+	int i;
+
+	if (list->size == list->max_size) {
+		if (list->max_size == 0)
+			list->max_size = 4;
+		list->max_size *= 2;
+		list->instrs = realloc(list->instrs, list->max_size*sizeof(ninstr));
+	}
+	for (i = list->size; i > n; --i) {
+		list->instrs[i] = list->instrs[i-1];
+	}
+	list->instrs[n] = *instr;
+	++list->size;
+}
+
 void nlist_delete(nlist *list, int n) {
 	int i;
 
@@ -69,9 +85,15 @@ void nlist_print_indent(nlist *list, int indent) {
 				indented = 1;
 			}
 			if (list->instrs[i].amount == 1) {
-				printf("%c", c);
+				if (list->instrs[i].offset)
+					printf("%d(%c)", list->instrs[i].offset, c);
+				else
+					printf("%c", c);
 			} else {
-				printf("%d%c", list->instrs[i].amount, c);
+				if (list->instrs[i].offset)
+					printf("%d(%d%c)", list->instrs[i].offset, list->instrs[i].amount, c);
+				else
+					printf("%d%c", list->instrs[i].amount, c);
 			}
 		} else {
 			if (list->instrs[i].loop.list.size == 0) {

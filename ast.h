@@ -23,6 +23,7 @@ struct ninstr_s {
 		int amount; // used with non-NLOOP
 		nloop loop; // used with NLOOP
 	};
+	int offset;
 	enum {
 		NLEFT,
 		NRIGHT,
@@ -37,6 +38,7 @@ struct ninstr_s {
 void nlist_init(nlist *list);
 void nlist_add(nlist *list, ninstr* instr);
 void nlist_delete(nlist *list, int n);
+void nlist_insert(nlist *list, ninstr *instr, int n);
 void nlist_print(nlist *list);
 void nlist_destroy(nlist *list);
 

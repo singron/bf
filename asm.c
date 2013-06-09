@@ -18,17 +18,17 @@ void emit_header(FILE *f) {
 	fprintf(f,"%s",
 			".globl _start\n"
 			".text\n"
-			"bf_input:\n"
+			"bf_input:\n" // buffer passed in rsi
 			"    movq $0, %rax\n" // sys_read
 			"    movq $0, %rdi\n" // fd
-			"    movq %rbx, %rsi\n" // buffer
+			// "    movq %rbx, %rsi\n" // buffer
 			"    movq $1, %rdx\n" // length
 			"    syscall\n"
 			"    retq\n"
-			"bf_output:\n"
+			"bf_output:\n" // buffer passed in rsi
 			"    movq $1, %rax\n" // sys_write
 			"    movq $1, %rdi\n" // fd
-			"    movq %rbx, %rsi\n" // buffer
+			//"    movq %rbx, %rsi\n" // buffer
 			"    movq $1, %rdx\n" // length
 			"    syscall\n"
 			"    retq\n"
@@ -73,22 +73,42 @@ void emit_assembly_intern(nlist *list, FILE* f, int *loopid) {
 					break;
 				case NADD:
 					if (a->amount == 1) {
-						fprintf(f,"    incb (%%rbx)\n");
+						if (a->offset)
+							fprintf(f,"    incb %d(%%rbx)\n", a->offset);
+						else
+							fprintf(f,"    incb (%%rbx)\n");
 					} else {
-						fprintf(f,"    addb $%d, (%%rbx)\n", a->amount);
+						if (a->offset)
+							fprintf(f,"    addb $%d, %d(%%rbx)\n", a->amount, a->offset);
+						else
+							fprintf(f,"    addb $%d, (%%rbx)\n", a->amount);
 					}
 					break;
 				case NSUB:
 					if (a->amount == 1) {
-						fprintf(f,"    decb (%%rbx)\n");
+						if (a->offset)
+							fprintf(f,"    decb %d(%%rbx)\n", a->offset);
+						else
+							fprintf(f,"    decb (%%rbx)\n");
 					} else {
-						fprintf(f,"    subb $%d, (%%rbx)\n", a->amount);
+						if (a->offset)
+							fprintf(f,"    subb $%d, %d(%%rbx)\n", a->amount, a->offset);
+						else
+							fprintf(f,"    subb $%d, (%%rbx)\n", a->amount);
 					}
 					break;
 				case NOUTPUT:
+					if (a->offset)
+						fprintf(f,"    leaq %d(%%rbx), %%rsi\n", a->offset);
+					else
+						fprintf(f,"    movq %%rbx, %%rsi\n");
 					fprintf(f,"    callq bf_output\n");
 					break;
 				case NINPUT:
+					if (a->offset)
+						fprintf(f,"    leaq %d(%%rbx), %%rsi\n", a->offset);
+					else
+						fprintf(f,"    movq %%rbx, %%rsi\n");
 					fprintf(f,"    callq bf_input\n");
 					break;
 				case NLOOP:
