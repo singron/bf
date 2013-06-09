@@ -1,0 +1,4 @@
+*.o
+.tab.h
+.yy.c
+bf
