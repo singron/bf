@@ -1,4 +1,7 @@
+*
+!*.*
+!Makefile
 *.o
-.tab.h
-.yy.c
-bf
+*.tab.h
+*.yy.c
+*.s

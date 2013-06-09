@@ -4,6 +4,7 @@
 #include "ast.h"
 
 void yyerror(const char * s) {printf("ERROR: %s\n", s);}
+int yylex(void);
 
 nlist program_begin;
 
@@ -40,15 +41,14 @@ list: list instruction { $$ = $1; nlist_add(&$$, &$2); }
 	;
 
 instruction: loop       { $$.loop = $1; $$.type = NLOOP; }
-		   | TOK_RIGHT  { $$.instr = '>'; $$.type = NINSTR; }
-		   | TOK_LEFT   { $$.instr = '<'; $$.type = NINSTR; }
-		   | TOK_INC    { $$.instr = '+'; $$.type = NINSTR; }
-		   | TOK_DEC    { $$.instr = '-'; $$.type = NINSTR; }
-		   | TOK_OUTPUT { $$.instr = '.'; $$.type = NINSTR; }
-		   | TOK_INPUT  { $$.instr = ','; $$.type = NINSTR; }
+		   | TOK_RIGHT  { $$.amount = 1; $$.type = NRIGHT; }
+		   | TOK_LEFT   { $$.amount = 1; $$.type = NLEFT; }
+		   | TOK_INC    { $$.amount = 1; $$.type = NADD; }
+		   | TOK_DEC    { $$.amount = 1; $$.type = NSUB; }
+		   | TOK_OUTPUT { $$.amount = 1; $$.type = NOUTPUT; }
+		   | TOK_INPUT  { $$.amount = 1; $$.type = NINPUT; }
 		   ;
 
 loop: TOK_LOOP_START list TOK_LOOP_END { $$.list = $2; }
-	| TOK_LOOP_START TOK_LOOP_END { nlist_init(&$$.list); }
 	;
 

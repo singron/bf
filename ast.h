@@ -20,17 +20,23 @@ struct nloop_s {
 
 struct ninstr_s {
 	union {
-		char instr;
-		nloop loop;
+		int amount; // used with non-NLOOP
+		nloop loop; // used with NLOOP
 	};
 	enum {
-		NINSTR,
+		NLEFT,
+		NRIGHT,
+		NADD,
+		NSUB,
+		NINPUT,
+		NOUTPUT,
 		NLOOP
 	} type;
 };
 
 void nlist_init(nlist *list);
 void nlist_add(nlist *list, ninstr* instr);
+void nlist_delete(nlist *list, int n);
 void nlist_print(nlist *list);
 void nlist_destroy(nlist *list);
 

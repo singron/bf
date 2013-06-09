@@ -1,9 +1,12 @@
 %{
 #include "bf-parser.tab.h"
 	int linenum = 1;
-	int yywrap(void) { }
 %}
+%option noyywrap
+%option nounput
+%option noinput
 %%
+
 
 \n  { ++linenum; }
 

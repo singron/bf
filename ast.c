@@ -20,25 +20,72 @@ void nlist_add(nlist *list, ninstr* instr) {
 	++list->size;
 }
 
+void nlist_delete(nlist *list, int n) {
+	int i;
+
+	if (list->instrs[n].type == NLOOP) {
+		nlist_destroy(&list->instrs[n].loop.list);
+	}
+	list->size--;
+	for (i = n; i < list->size; ++i) {
+		list->instrs[i] = list->instrs[i+1];
+	}
+}
+
 void nlist_print_indent(nlist *list, int indent) {
 	int i;
 	char * spaces = alloca(indent+1);
 	spaces[indent] = '\0';
 	memset(spaces, ' ', indent);
+	int indented = 0;
 	for (i = 0; i < list->size; ++i) {
-		if (list->instrs[i].type == NINSTR) {
-			printf("%c", list->instrs[i].instr);
+		if (list->instrs[i].type != NLOOP) {
+			char c;
+			switch(list->instrs[i].type) {
+				case NADD:
+					c = '+';
+					break;
+				case NSUB:
+					c = '-';
+					break;
+				case NLEFT:
+					c = '<';
+					break;
+				case NRIGHT:
+					c = '>';
+					break;
+				case NINPUT:
+					c = ',';
+					break;
+				case NOUTPUT:
+					c = '.';
+					break;
+				case NLOOP:
+					/* shouldn't happen */
+					break;
+			}
+			if (!indented) {
+				printf(spaces);
+				indented = 1;
+			}
+			if (list->instrs[i].amount == 1) {
+				printf("%c", c);
+			} else {
+				printf("%d%c", list->instrs[i].amount, c);
+			}
 		} else {
 			if (list->instrs[i].loop.list.size == 0) {
 				/* shorten empty loops */
 				printf("[]");
 			} else {
-				printf("\n%s[\n  %s", spaces, spaces);
+				printf("\n%s[\n", spaces);
 				nlist_print_indent(&list->instrs[i].loop.list, indent+2);
-				printf("\n%s]\n  %s", spaces, spaces);
+				printf("%s]\n", spaces);
+				indented = 0;
 			}
 		}
 	}
+	printf("\n");
 }
 
 void nlist_print(nlist *list) {

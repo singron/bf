@@ -18,18 +18,6 @@ void emit_header(FILE *f) {
 	fprintf(f,"%s",
 			".globl _start\n"
 			".text\n"
-			"bf_inc:\n"
-			"    incb (%rbx)\n"
-			"    retq\n"
-			"bf_dec:\n"
-			"    decb (%rbx)\n"
-			"    retq\n"
-			"bf_right:\n"
-			"    inc %rbx\n"
-			"    retq\n"
-			"bf_left:\n"
-			"    dec %rbx\n"
-			"    retq\n"
 			"bf_input:\n"
 			"    movq $0, %rax\n" // sys_read
 			"    movq $0, %rdi\n" // fd
@@ -66,25 +54,45 @@ void emit_header(FILE *f) {
 void emit_assembly_intern(nlist *list, FILE* f, int *loopid) {
 	int i;
 	for (i = 0; i < list->size; ++i) {
-		if (list->instrs[i].type == NINSTR) {
-			switch (list->instrs[i].instr) {
-				case '<':
-					fprintf(f,"    callq bf_left\n");
+		if (list->instrs[i].type != NLOOP) {
+			ninstr *a = &list->instrs[i];
+			switch (list->instrs[i].type) {
+				case NLEFT:
+					if (a->amount == 1) {
+						fprintf(f,"    decq %%rbx\n");
+					} else {
+						fprintf(f,"    subq $%d, %%rbx\n", a->amount);
+					}
 					break;
-				case '>':
-					fprintf(f,"    callq bf_right\n");
+				case NRIGHT:
+					if (a->amount == 1) {
+						fprintf(f,"    incq %%rbx\n");
+					} else {
+						fprintf(f,"    addq $%d, %%rbx\n", a->amount);
+					}
 					break;
-				case '+':
-					fprintf(f,"    callq bf_inc\n");
+				case NADD:
+					if (a->amount == 1) {
+						fprintf(f,"    incb (%%rbx)\n");
+					} else {
+						fprintf(f,"    addb $%d, (%%rbx)\n", a->amount);
+					}
 					break;
-				case '-':
-					fprintf(f,"    callq bf_dec\n");
+				case NSUB:
+					if (a->amount == 1) {
+						fprintf(f,"    decb (%%rbx)\n");
+					} else {
+						fprintf(f,"    subb $%d, (%%rbx)\n", a->amount);
+					}
 					break;
-				case '.':
+				case NOUTPUT:
 					fprintf(f,"    callq bf_output\n");
 					break;
-				case ',':
+				case NINPUT:
 					fprintf(f,"    callq bf_input\n");
+					break;
+				case NLOOP:
+					/* should never get here */
 					break;
 			}
 		} else {
