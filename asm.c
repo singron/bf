@@ -20,7 +20,7 @@ int isPowerOfTwo (unsigned int x)
 }
 
 /* euclidian extended Elgorithm? */
-inline void eee (int a, int b, int *gcd, int *x, int *y) {
+static inline void eee (int a, int b, int *gcd, int *x, int *y) {
 	*x=0, *y=1; 
 	int u=1, v=0, m, n, q, r;
 	*gcd = b;

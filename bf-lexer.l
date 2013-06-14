@@ -1,4 +1,5 @@
 %{
+#include <stdio.h>
 #include "bf-parser.tab.h"
 	int linenum = 1;
 %}

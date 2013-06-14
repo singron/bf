@@ -1,5 +1,5 @@
-CPPFLAGS := $(CPPFLAGS) -I.
-CFLAGS := $(CFLAGS) -ggdb3 -Wall -Wextra
+CPPFLAGS := $(CPPFLAGS) -I. -std=gnu11 -Wall -Wextra -D_GNU_SOURCE
+CFLAGS := $(CFLAGS) -ggdb3 -Wall -Wextra -std=gnu11
 
 TESTS = hello hellom 31 brainfuck jabh benchmark benchmark2 mandelbrot
 
