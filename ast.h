@@ -20,10 +20,10 @@ struct nloop_s {
 
 struct ninstr_s {
 	union {
-		int amount; // used with non-NLOOP
+		int offset; // used with non-NLOOP
 		nloop loop; // used with NLOOP
 	};
-	int offset;
+	int amount; 
 	enum {
 		NLEFT,
 		NRIGHT,
@@ -31,7 +31,10 @@ struct ninstr_s {
 		NSUB,
 		NINPUT,
 		NOUTPUT,
-		NLOOP
+		NLOOP,
+		NMULTADD,
+		NMULTSUB,
+		NFIXEDLOOP
 	} type;
 };
 

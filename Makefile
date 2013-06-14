@@ -1,7 +1,7 @@
 CPPFLAGS := $(CPPFLAGS) -I.
 CFLAGS := $(CFLAGS) -ggdb3 -Wall -Wextra
 
-TESTS = hello brainfuck benchmark benchmark2 mandelbrot
+TESTS = hello hellom 31 brainfuck jabh benchmark benchmark2 mandelbrot
 
 bf: bf.o bf-lexer.yy.o ast.o asm.o opt.o
 
@@ -20,6 +20,10 @@ bf-lexer.yy.c: bf-lexer.l bf-parser.tab.h
 
 %.yy.c: %.l
 	flex -o $@ $<
+
+lin_con: lin_con.o asm.o
+
+lin_con.o: lin_con.c asm.h
 
 clean:
 	rm -f ast.o bf-lexer.yy.c bf-lexer.yy.o bf-parser.tab.h bf.o bf asm.o $(TESTS)

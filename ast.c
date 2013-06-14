@@ -55,7 +55,7 @@ void nlist_print_indent(nlist *list, int indent) {
 	memset(spaces, ' ', indent);
 	int indented = 0;
 	for (i = 0; i < list->size; ++i) {
-		if (list->instrs[i].type != NLOOP) {
+		if (list->instrs[i].type != NLOOP && list->instrs[i].type != NFIXEDLOOP) {
 			char c;
 			switch(list->instrs[i].type) {
 				case NADD:
@@ -63,6 +63,12 @@ void nlist_print_indent(nlist *list, int indent) {
 					break;
 				case NSUB:
 					c = '-';
+					break;
+				case NMULTADD:
+					c = '*';
+					break;
+				case NMULTSUB:
+					c = '^';
 					break;
 				case NLEFT:
 					c = '<';
@@ -77,6 +83,7 @@ void nlist_print_indent(nlist *list, int indent) {
 					c = '.';
 					break;
 				case NLOOP:
+				case NFIXEDLOOP:
 					/* shouldn't happen */
 					break;
 			}

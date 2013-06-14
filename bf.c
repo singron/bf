@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 	if (optimize) {
 		opt_all(&program_begin, debug);
 	}
-	emit_assembly(&program_begin, stdout);
+	emit_assembly(&program_begin, stdout, debug);
 	nlist_destroy(&program_begin);
 
 	return 0;
