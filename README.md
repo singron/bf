@@ -22,11 +22,11 @@ Optimizations
 -------------
 
 * Combining adjacent operations
-* * For example, ++-++-++- becomes +3.
+  * For example, ++-++-++- becomes +3.
 * Making "fixed loops" run in a single pass.
-* * A "fixed loop" is a loop without IO where the cursor is at the same position for each instruction for each iteration of the loop.
-* * This means operations can be easily combined across loop iterations.
-* * For example, `+[>+<+]` would become `+ > +255 < +255`.
+  * A "fixed loop" is a loop without IO where the cursor is at the same position for each instruction for each iteration of the loop.
+  * This means operations can be easily combined across loop iterations.
+  * For example, `+[>+<+]` would become `+ > +255 < +255`.
 * Removing cursor movements
-* * Instead, instructions can be encoded with offsets.
-* * For example, `+>>>>+<<<<` would become `+(0) +(4)`
+  * Instead, instructions can be encoded with offsets.
+  * For example, `+>>>>+<<<<` would become `+(0) +(4)`
